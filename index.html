@@ -111,6 +111,25 @@ h2 .ul::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:.0
 .btn{position:relative;overflow:hidden;isolation:isolate}
 .btn::before{content:"";position:absolute;inset:0;background:currentColor;opacity:.12;transform:translateX(-101%);transition:transform .45s cubic-bezier(.2,.8,.2,1);z-index:-1}
 .btn:hover::before{transform:none}
+/* hero: split layout on wide screens so portrait photos are not cropped */
+@media (min-width:860px){
+  .hero{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,46%);background:var(--bg);color:var(--fg);height:min(82svh,760px);min-height:520px}
+  .hero::after{display:none}
+  .hero-media{position:relative;overflow:hidden;background:#111;grid-column:2;grid-row:1;height:100%}
+  .hero-media .slide img{object-position:50% 20%}
+  .hero .wrap{grid-column:1;grid-row:1;width:100%;max-width:none;margin:0;padding-left:max(20px,env(safe-area-inset-left,0px),calc((100vw - 1240px)/2 + 20px));padding-right:40px;padding-bottom:0;justify-content:center;gap:0}
+  .hero .label{color:var(--burgundy)}
+  .hero h1{font-size:clamp(44px,5.2vw,84px);max-width:12ch;margin:14px 0 26px}
+  .hero p{color:var(--mute)}
+  .hero-row{flex-direction:column;align-items:flex-start;gap:26px}
+  .hero .btn{color:var(--fg)}
+  .hero .btn:hover{background:var(--fg);color:var(--bg);border-color:var(--fg)}
+  .dots button{background:var(--rule)}
+  .dots button::after{background:var(--burgundy)}
+}
+@media (max-width:859px){
+  .hero-media{position:absolute;inset:0}
+}
 /* work filmstrip */
 .work{padding-block:48px 56px}
 .work-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
@@ -210,11 +229,13 @@ h2 .ul::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:.0
 
 <main id="top">
 <section class="hero" id="hero" aria-roledescription="carousel" aria-label="Featured work">
+  <div class="hero-media">
   <div class="slide on"><img src="img/hedsor-dsc02041.jpg" alt="A bride on a stone balcony at dusk, Hedsor House" fetchpriority="high"></div>
   <div class="slide"><img src="img/portrait-dsc06767.jpg" alt="Studio portrait in denim beside a vintage television" loading="lazy"></div>
   <div class="slide"><img src="img/wedding-7i9a2895.jpg" alt="A couple in white agbada and gele walking through a flower-filled hall" loading="lazy"></div>
   <div class="slide"><img src="img/family-dsc06113.jpg" alt="A toddler laughing over his father's shoulder" loading="lazy"></div>
   <div class="slide"><img src="img/wadhurst-dsc03686.jpg" alt="A couple in lilac aso-oke by a stone chapel tower, Wadhurst" loading="lazy"></div>
+  </div>
   <div class="wrap">
     <span class="label rise" style="--d:.2s">Creative media studio · East Sussex</span>
     <h1 class="rise" style="--d:.35s">Photography &amp; film for the <b>days you'll want back.</b></h1>
