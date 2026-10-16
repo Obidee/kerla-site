@@ -130,6 +130,10 @@ h2 .ul::after{content:"";position:absolute;left:0;right:0;bottom:.04em;height:.0
 @media (max-width:859px){
   .hero-media{position:absolute;inset:0}
 }
+/* image protection: no drag, no long-press save, no selection */
+img{-webkit-user-drag:none;user-drag:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.hero-media img,.studio .photo img,.track .ph img{pointer-events:none}
+.lb-stage img{-webkit-touch-callout:none}
 /* work filmstrip */
 .work{padding-block:48px 56px}
 .work-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:22px}
@@ -370,6 +374,13 @@ const SETS = {
   ],
 };
 
+/* ---------- image protection ---------- */
+const isImg = t => t && (t.tagName === "IMG" || (t.closest && t.closest(".ph, .photo, .hero-media, .lb-stage")));
+document.addEventListener("contextmenu", e => { if (isImg(e.target)) e.preventDefault(); });
+document.addEventListener("dragstart", e => { if (e.target.tagName === "IMG") e.preventDefault(); });
+document.addEventListener("keydown", e => { if ((e.metaKey || e.ctrlKey) && (e.key === "s" || e.key === "S")) e.preventDefault(); });
+document.querySelectorAll("img").forEach(i => i.setAttribute("draggable", "false"));
+
 /* ---------- entrance & scroll reveals ---------- */
 document.documentElement.classList.add("js"); document.body.classList.add("js");
 if (!matchMedia("(prefers-reduced-motion: reduce)").matches) { document.body.classList.add("intro"); setTimeout(() => document.body.classList.remove("intro"), 3200); }
@@ -396,7 +407,7 @@ function render(set){
   list.forEach(([id, alt], i) => {
     const b = document.createElement("button"); b.type = "button"; b.className = "ph"; b.style.animationDelay = (i * 60) + "ms";
     b.setAttribute("aria-label", "View image " + (i + 1) + " of " + list.length);
-    b.innerHTML = `<img src="${B(id)}" alt="${alt}" loading="${i < 4 ? "eager" : "lazy"}" decoding="async">`;
+    b.innerHTML = `<img draggable="false" src="${B(id)}" alt="${alt}" loading="${i < 4 ? "eager" : "lazy"}" decoding="async">`;
     b.addEventListener("click", () => { if (!dragged) openLB(i); });
     track.appendChild(b);
   });
