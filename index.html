@@ -2,6 +2,7 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
+<script src="assets/track.js"></script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Wedding &amp; Portrait Photographer in Hastings, East Sussex | Kerla</title>
 <meta name="description" content="Kerla is a photography and film studio in Hastings, East Sussex. Wedding, portrait, family and commercial photography and cinematic wedding films covering Hastings, Eastbourne, Brighton, Tunbridge Wells and anywhere in the UK.">
@@ -117,6 +118,7 @@
           <select id="f-type" name="type"><option>Wedding</option><option>Portrait session</option><option>Family or milestone</option><option>Corporate or commercial</option><option>Event</option><option>Film</option><option>Something else</option></select>
         </label>
         <label>Date &amp; details <textarea id="f-msg" name="message"></textarea></label>
+        <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <button class="btn" type="submit">Send enquiry</button>
         <p class="note" id="form-note"></p>
       </form>
@@ -272,14 +274,29 @@ lb.addEventListener("touchend", e => { if (tx === null) return; const d = e.chan
 /* ---------- contact ---------- */
 const EMAIL = "hello@kerla.co.uk";
 const form = document.getElementById("enquiry"), thanks = document.getElementById("thanks");
-form.addEventListener("submit", e => {
+form.addEventListener("submit", async e => {
   e.preventDefault();
   const name = document.getElementById("f-name").value.trim(), email = document.getElementById("f-email").value.trim(), note = document.getElementById("form-note");
   if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = "Please add your name and a valid email address so we can reply."; return; }
+  if (form.querySelector("[name=_honey]").value) return;
   const type = document.getElementById("f-type").value, msg = document.getElementById("f-msg").value.trim();
-  const body = `Hello Kerla,\n\nI'd like to enquire about: ${type}\n${msg}\n\n${name}\n${email}`;
+  const btn = form.querySelector("button[type=submit]"); btn.disabled = true; btn.textContent = "Sending…"; note.textContent = "";
+  let sent = false;
+  try {
+    const r = await fetch("https://formsubmit.co/ajax/" + EMAIL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
+      body: JSON.stringify({ name, email, shoot: type, message: msg, _subject: "Website enquiry: " + type + " — " + name, _replyto: email, _template: "table" }) });
+    const j = await r.json().catch(() => ({}));
+    sent = r.ok && String(j.success) !== "false";
+  } catch (err) {}
+  btn.disabled = false; btn.textContent = "Send enquiry";
   form.hidden = true; thanks.hidden = false;
-  thanks.innerHTML = `Thank you, ${name.split(" ")[0]}. Your message is ready — copy it and send it to <b>${EMAIL}</b>, or open it in your mail app. We reply within two working days.<br><button class="copy" type="button" id="copy-msg">Copy message</button> <a class="copy" style="text-decoration:none" href="mailto:${EMAIL}?subject=${encodeURIComponent("Enquiry: " + type)}&body=${encodeURIComponent(body)}">Open mail app</a> <button class="copy" type="button" id="again">Edit</button>`;
+  if (sent) {
+    if (window.kerlaLead) kerlaLead("form");
+    thanks.innerHTML = `Thank you, ${name.split(" ")[0]}. Your enquiry is on its way and we'll reply to <b>${email.replace(/</g,"")}</b> within two working days.`;
+    return;
+  }
+  const body = `Hello Kerla,\n\nI'd like to enquire about: ${type}\n${msg}\n\n${name}\n${email}`;
+  thanks.innerHTML = `Sorry, ${name.split(" ")[0]}, that didn't send. Please email it to <b>${EMAIL}</b> instead — we reply within two working days.<br><button class="copy" type="button" id="copy-msg">Copy message</button> <a class="copy" style="text-decoration:none" href="mailto:${EMAIL}?subject=${encodeURIComponent("Enquiry: " + type)}&body=${encodeURIComponent(body)}">Open mail app</a> <button class="copy" type="button" id="again">Edit</button>`;
   document.getElementById("copy-msg").addEventListener("click", ev => copyText(body, ev.target));
   document.getElementById("again").addEventListener("click", () => { form.hidden = false; thanks.hidden = true; });
 });
