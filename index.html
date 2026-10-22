@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <script src="assets/track.js"></script>
+<script src="assets/chat.js" defer></script>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Wedding &amp; Portrait Photographer in Hastings, East Sussex | Kerla</title>
 <meta name="description" content="Kerla is a photography and film studio in Hastings, East Sussex. Wedding, portrait, family and commercial photography and cinematic wedding films covering Hastings, Eastbourne, Brighton, Tunbridge Wells and anywhere in the UK.">
@@ -106,6 +107,7 @@
       <p>Tell us the date, the place and what you have in mind. We reply within 24 hours.</p>
       <div class="links">
         <div><small>Email</small><a href="mailto:hello@kerla.co.uk" id="email">hello@kerla.co.uk</a> <button class="copy" type="button" data-copy="email">Copy</button></div>
+        <div><small>WhatsApp</small><a href="https://wa.me/447460839878" target="_blank" rel="noopener">07460 839878</a></div>
         <div><small>Instagram</small><a href="https://instagram.com/kerla.studio" target="_blank" rel="noopener">@kerla.studio</a></div>
         <div><small>Studio</small><span>Hastings, East Sussex</span></div>
       </div>
@@ -301,7 +303,7 @@ form.addEventListener("submit", async e => {
   let sent = false;
   try {
     const r = await fetch("https://formsubmit.co/ajax/" + EMAIL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({ name, email, shoot: type, date, venue: venue || "Not set", budget: budget || "Not set", found_us: found, message: msg || "—", first_visit_source: src.source || "Direct", landing_page: src.landing || "", _subject: "Website enquiry: " + type + " — " + name + (dateRaw ? " — " + date : ""), _replyto: email, _template: "table" }) });
+      body: JSON.stringify({ name, email, shoot: type, date, venue: venue || "Not set", budget: budget || "Not set", found_us: found, message: msg || "—", first_visit_source: src.source || "Direct", landing_page: src.landing || "", _autoresponse: `Hi ${name.split(" ")[0]},\n\nThank you for getting in touch with Kerla about your ${type.toLowerCase()}${dateRaw ? " on " + date : ""}. Your enquiry has arrived safely, and Obi will reply personally within 24 hours, usually sooner.\n\nIn the meantime, you can see recent work at https://kerla.co.uk or on Instagram at @kerla.studio. If it is urgent, message us on WhatsApp: https://wa.me/447460839878\n\nSpeak soon,\nKerla\nPhotography and film, Hastings, East Sussex\nhello@kerla.co.uk`, _subject: "Website enquiry: " + type + " — " + name + (dateRaw ? " — " + date : ""), _replyto: email, _template: "table" }) });
     const j = await r.json().catch(() => ({}));
     sent = r.ok && String(j.success) !== "false";
   } catch (err) {}

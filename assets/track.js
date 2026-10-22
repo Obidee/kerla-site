@@ -52,6 +52,7 @@
     var h = a.getAttribute("href");
     if (/^mailto:/i.test(h)) kerlaLead("email");
     else if (/instagram\.com\/kerla\.studio/i.test(h)) kerlaLead("instagram");
+    else if (/wa\.me\/|api\.whatsapp\.com/i.test(h)) kerlaLead("whatsapp");
   }, true);
 
   /* small consent bar */
