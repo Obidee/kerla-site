@@ -15,6 +15,36 @@
   var s = document.createElement("script"); s.async = true; s.src = "https://www.googletagmanager.com/gtag/js?id=" + AW;
   document.head.appendChild(s);
 
+  /* first-visit source (kept 90 days) so every enquiry shows where it came from */
+  var SKEY = "kerla-src";
+  function detectSource() {
+    var q = new URLSearchParams(location.search), ref = document.referrer, host = "";
+    try { host = ref ? new URL(ref).hostname.replace(/^www\./, "") : ""; } catch (e) {}
+    if (q.get("gclid") || q.get("gbraid") || q.get("wbraid") || /cpc|ppc|paid/i.test(q.get("utm_medium") || "")) return "Google Ads";
+    if (q.get("utm_source")) return q.get("utm_source") + (q.get("utm_medium") ? " / " + q.get("utm_medium") : "");
+    if (!host || host === location.hostname.replace(/^www\./, "")) return "Direct";
+    if (/google\./.test(host)) return "Google (organic search or Maps)";
+    if (/instagram\.com|l\.instagram/.test(host)) return "Instagram";
+    if (/facebook\.com|fb\.me/.test(host)) return "Facebook";
+    if (/bing\.com/.test(host)) return "Bing";
+    return "Referral: " + host;
+  }
+  var firstSeen = { source: detectSource(), landing: location.pathname + location.search.slice(0, 120), t: Date.now() };
+  function rememberSource() {
+    try {
+    var saved2 = JSON.parse(localStorage.getItem(SKEY) || "null");
+    var now = Date.now(), fresh = detectSource();
+    if (!saved2 || now - saved2.t > 90 * 864e5 || (fresh !== "Direct" && saved2.source === "Direct")) {
+      localStorage.setItem(SKEY, JSON.stringify(firstSeen));
+    }
+    } catch (e) {}
+  }
+  if (granted === "granted") rememberSource(); /* only stored after cookie consent */
+  window.kerlaSource = function () {
+    try { var v = JSON.parse(localStorage.getItem(SKEY) || "null"); if (v) return v; } catch (e) {}
+    return firstSeen;
+  };
+
   /* one call for every kind of enquiry: form, email link, Instagram link */
   window.kerlaLead = function (how) { gtag("event", "conversion", { send_to: LEAD, value: 1.0, currency: "GBP", method: how }); };
   document.addEventListener("click", function (e) {
@@ -29,6 +59,7 @@
     try { localStorage.setItem(KEY, v); } catch (e) {}
     gtag("consent", "update", { ad_storage: v, ad_user_data: v, ad_personalization: v, analytics_storage: v });
     gtag("set", "ads_data_redaction", v === "denied");
+    if (v === "granted") rememberSource(); else { try { localStorage.removeItem(SKEY); } catch (e) {} }
     var b = document.getElementById("consent"); if (b) b.remove();
   }
   if (!saved) document.addEventListener("DOMContentLoaded", function () {

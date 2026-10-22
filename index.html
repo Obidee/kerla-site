@@ -103,7 +103,7 @@
     <div class="reveal">
       <span class="label">Get in touch</span>
       <h2>Let's make <b class="ul">something.</b></h2>
-      <p>Tell us the date, the place and what you have in mind. We reply within two working days.</p>
+      <p>Tell us the date, the place and what you have in mind. We reply within 24 hours.</p>
       <div class="links">
         <div><small>Email</small><a href="mailto:hello@kerla.co.uk" id="email">hello@kerla.co.uk</a> <button class="copy" type="button" data-copy="email">Copy</button></div>
         <div><small>Instagram</small><a href="https://instagram.com/kerla.studio" target="_blank" rel="noopener">@kerla.studio</a></div>
@@ -117,7 +117,19 @@
         <label>What are we shooting?
           <select id="f-type" name="type"><option>Wedding</option><option>Portrait session</option><option>Family or milestone</option><option>Corporate or commercial</option><option>Event</option><option>Film</option><option>Something else</option></select>
         </label>
-        <label>Date &amp; details <textarea id="f-msg" name="message"></textarea></label>
+        <div class="row2">
+          <label>Date <input id="f-date" name="date" type="date" min="2026-01-01"></label>
+          <label>Venue or location <input id="f-venue" name="venue" type="text" autocomplete="off" placeholder="e.g. Hastings, or venue name"></label>
+        </div>
+        <div class="row2">
+          <label>Budget
+            <select id="f-budget" name="budget"><option value="">Choose a range</option><option>Under £500</option><option>£500–£1,000</option><option>£1,000–£1,750</option><option>£1,750–£2,750</option><option>£2,750+</option><option>Not sure yet</option></select>
+          </label>
+          <label>How did you find us?
+            <select id="f-found" name="found"><option value="">Choose one</option><option>Google search</option><option>Google Maps</option><option>Instagram</option><option>A venue or supplier</option><option>Friend, family or past client</option><option>Wedding directory</option><option>Other</option></select>
+          </label>
+        </div>
+        <label>Anything else? <textarea id="f-msg" name="message" placeholder="Guest numbers, timings, the feel you're after…"></textarea></label>
         <input type="text" name="_honey" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
         <button class="btn" type="submit">Send enquiry</button>
         <p class="note" id="form-note"></p>
@@ -280,11 +292,16 @@ form.addEventListener("submit", async e => {
   if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { note.textContent = "Please add your name and a valid email address so we can reply."; return; }
   if (form.querySelector("[name=_honey]").value) return;
   const type = document.getElementById("f-type").value, msg = document.getElementById("f-msg").value.trim();
+  const val = id => document.getElementById(id).value.trim();
+  const dateRaw = val("f-date"), venue = val("f-venue"), budget = val("f-budget"), found = val("f-found");
+  const date = dateRaw ? new Date(dateRaw + "T12:00:00").toLocaleDateString("en-GB", {day:"numeric", month:"short", year:"numeric"}) : "Not set";
+  if (!found) { note.textContent = "Please tell us how you found us — it really helps."; return; }
+  const src = (window.kerlaSource && window.kerlaSource()) || {};
   const btn = form.querySelector("button[type=submit]"); btn.disabled = true; btn.textContent = "Sending…"; note.textContent = "";
   let sent = false;
   try {
     const r = await fetch("https://formsubmit.co/ajax/" + EMAIL, { method: "POST", headers: { "Content-Type": "application/json", "Accept": "application/json" },
-      body: JSON.stringify({ name, email, shoot: type, message: msg, _subject: "Website enquiry: " + type + " — " + name, _replyto: email, _template: "table" }) });
+      body: JSON.stringify({ name, email, shoot: type, date, venue: venue || "Not set", budget: budget || "Not set", found_us: found, message: msg || "—", first_visit_source: src.source || "Direct", landing_page: src.landing || "", _subject: "Website enquiry: " + type + " — " + name + (dateRaw ? " — " + date : ""), _replyto: email, _template: "table" }) });
     const j = await r.json().catch(() => ({}));
     sent = r.ok && String(j.success) !== "false";
   } catch (err) {}
@@ -292,11 +309,11 @@ form.addEventListener("submit", async e => {
   form.hidden = true; thanks.hidden = false;
   if (sent) {
     if (window.kerlaLead) kerlaLead("form");
-    thanks.innerHTML = `Thank you, ${name.split(" ")[0]}. Your enquiry is on its way and we'll reply to <b>${email.replace(/</g,"")}</b> within two working days.`;
+    thanks.innerHTML = `Thank you, ${name.split(" ")[0]}. Your enquiry is on its way and we'll reply to <b>${email.replace(/</g,"")}</b> within 24 hours.`;
     return;
   }
-  const body = `Hello Kerla,\n\nI'd like to enquire about: ${type}\n${msg}\n\n${name}\n${email}`;
-  thanks.innerHTML = `Sorry, ${name.split(" ")[0]}, that didn't send. Please email it to <b>${EMAIL}</b> instead — we reply within two working days.<br><button class="copy" type="button" id="copy-msg">Copy message</button> <a class="copy" style="text-decoration:none" href="mailto:${EMAIL}?subject=${encodeURIComponent("Enquiry: " + type)}&body=${encodeURIComponent(body)}">Open mail app</a> <button class="copy" type="button" id="again">Edit</button>`;
+  const body = `Hello Kerla,\n\nI'd like to enquire about: ${type}\nDate: ${date}\nVenue or location: ${venue || "Not set"}\nBudget: ${budget || "Not set"}\nHow I found you: ${found}\n\n${msg}\n\n${name}\n${email}`;
+  thanks.innerHTML = `Sorry, ${name.split(" ")[0]}, that didn't send. Please email it to <b>${EMAIL}</b> instead — we reply within 24 hours.<br><button class="copy" type="button" id="copy-msg">Copy message</button> <a class="copy" style="text-decoration:none" href="mailto:${EMAIL}?subject=${encodeURIComponent("Enquiry: " + type)}&body=${encodeURIComponent(body)}">Open mail app</a> <button class="copy" type="button" id="again">Edit</button>`;
   document.getElementById("copy-msg").addEventListener("click", ev => copyText(body, ev.target));
   document.getElementById("again").addEventListener("click", () => { form.hidden = false; thanks.hidden = true; });
 });

@@ -205,3 +205,8 @@ img{-webkit-user-drag:none;user-drag:none;-webkit-user-select:none;user-select:n
 #consent div{display:flex;gap:8px}
 #consent button{font:inherit;font-weight:600;border-radius:999px;padding:8px 14px;cursor:pointer;border:1px solid #f3f1ec33;background:transparent;color:inherit}
 #consent button[data-v=granted]{background:#ffde59;color:#111;border-color:#ffde59}
+
+.contact .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media (max-width:520px){.contact .row2{grid-template-columns:1fr}}
+.contact input[type=date]{color-scheme:dark;min-height:46px}
+.contact input::placeholder,.contact textarea::placeholder{color:#6f6c66}
