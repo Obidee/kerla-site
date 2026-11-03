@@ -24,7 +24,7 @@
       opts: [["Check my date", "enquire:Wedding"], ["Back to start", "start"]] },
     portrait: { say: ["Portrait sessions are 1 hour at one location or in the studio, with 15 edited images, from £150.", "Your gallery arrives within 2 weeks."],
       opts: [["Book a session", "enquire:Portrait session"], ["See portrait work", "link:portrait-photographer-hastings/"], ["Back to start", "start"]] },
-    family: { say: ["Family and milestone sessions (maternity, newborn, birthdays, generations together) are 1 hour at home, outdoors or in the studio, with 25 edited images, from £250.", "Your gallery arrives within 2 weeks."],
+    family: { say: ["Family and milestone sessions (maternity, newborn, birthdays, generations together) are 1 hour at home, outdoors or in the studio, from £250.", "Your gallery arrives within 2 weeks."],
       opts: [["Book a session", "enquire:Family or milestone"], ["See family work", "link:family-photographer-hastings/"], ["Back to start", "start"]] },
     corporate: { say: ["Headshots are an add-on to an event booking: a headshot station at your event for £25 per person (minimum 6, so from £150), with one retouched headshot each.", "Event coverage is £265 for 2 hours, £445 for a half day or £805 for a full day. Brand and commercial shoots are quoted per brief, after a short call about scope and outcomes.", "These are photography-only prices. Event film is quoted separately.", "Full details: kerla.co.uk/corporate-photographer-hastings/"],
       opts: [["Get a quote", "enquire:Corporate or commercial"], ["Back to start", "start"]] },
