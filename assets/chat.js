@@ -22,13 +22,13 @@
       opts: [["Check my date", "enquire:Wedding"], ["What's included?", "included"], ["How does booking work?", "book"], ["See wedding work", "link:wedding-photographer-hastings/"], ["Back to start", "start"]] },
     included: { say: ["Every wedding comes with edited images in a private online gallery to share and download: 300+ for Essentials, 600+ for Full Day.", "You get a sneak peek within a week, the full gallery in 6–8 weeks and highlight films in 8–10 weeks."],
       opts: [["Check my date", "enquire:Wedding"], ["Back to start", "start"]] },
-    portrait: { say: ["Portrait sessions are 1 hour at one location or in the studio, with 15 edited images, from £150.", "Your gallery arrives within 2 weeks."],
+    portrait: { say: ["Individual headshots are £90 per person for a 1-hour session, in the studio or on location.", "Longer portrait sessions for individuals, couples and families are a minimum of 2 hours, from £180.", "Your gallery arrives within 2 weeks."],
       opts: [["Book a session", "enquire:Portrait session"], ["See portrait work", "link:portrait-photographer-hastings/"], ["Back to start", "start"]] },
     family: { say: ["Family and milestone sessions (maternity, newborn, birthdays, generations together) are a minimum of 2 hours at home, outdoors or in the studio, from £180.", "Your gallery arrives within 2 weeks."],
       opts: [["Book a session", "enquire:Family or milestone"], ["See family work", "link:family-photographer-hastings/"], ["Back to start", "start"]] },
-    corporate: { say: ["Headshots are an add-on to an event booking: a headshot station at your event for £25 per person (minimum 6, so from £150), with one retouched headshot each.", "Event coverage is £265 for 2 hours, £445 for a half day or £805 for a full day. Brand and commercial shoots are quoted per brief, after a short call about scope and outcomes.", "These are photography-only prices. Event film is quoted separately.", "Full details: kerla.co.uk/corporate-photographer-hastings/"],
+    corporate: { say: ["Corporate headshots are £150 for a 2-hour session for your team, with travel depending on location. Anyone extra who wants a headshot within the same 2 hours is £25 per person.", "Event coverage is £265 for 2 hours, £445 for a half day or £805 for a full day. Brand and commercial shoots are quoted per brief, after a short call about scope and outcomes.", "These are photography-only prices. Event film is quoted separately.", "Full details: kerla.co.uk/corporate-photographer-hastings/"],
       opts: [["Get a quote", "enquire:Corporate or commercial"], ["Back to start", "start"]] },
-    prices: { say: ["Our starting prices:", "• Weddings: Essentials £950 · Full Day £1,650 · Photo + Film quoted for your day\n• Portrait sessions from £150\n• Family and milestone sessions from £180\n• Headshot add-on at events £25 per person (min. 6)\n• Events from £265 for 2 hours"],
+    prices: { say: ["Our starting prices:", "• Weddings: Essentials £950 · Full Day £1,650 · Photo + Film quoted for your day\n• Individual headshots £90 per person (1 hour)\n• Portrait, family and milestone sessions (2 hours) from £180\n• Corporate headshots £150 for 2 hours, plus £25 per extra person\n• Events from £265 for 2 hours"],
       opts: [["Check my date", "enquire"], ["How does booking work?", "book"], ["Back to start", "start"]] },
     book: { say: ["A 25% non-refundable deposit secures a wedding date, and the balance is due 4 weeks before.", "Portrait, family and event sessions are paid when booked. Travel is free within 30 miles of Hastings, then 45p a mile."],
       opts: [["Check my date", "enquire"], ["Back to start", "start"]] },
@@ -46,14 +46,14 @@
     if (/(price|cost|how much|£|quote|package|rate)/.test(t)) {
       if (/wedding|elope|film|video/.test(t)) return "wedding";
       if (/family|newborn|maternity|baby|birthday|kids/.test(t)) return "family";
-      if (/headshot|corporate|event|business|brand/.test(t)) return "corporate";
-      if (/portrait/.test(t)) return "portrait";
+      if (/corporate|event|business|brand|team|staff|company/.test(t)) return "corporate";
+      if (/headshot|portrait/.test(t)) return "portrait";
       return "prices";
     }
     if (/(available|availability|free on|my date|check.*date|book (a|my)|booking)/.test(t)) return "enquire";
     if (/(deposit|pay|balance|instal)/.test(t)) return "book";
     if (/(wedding|bride|groom|elope|engage|film|video)/.test(t)) return "wedding";
-    if (/(portrait|headshot|solo|graduation)/.test(t)) return /headshot/.test(t) ? "corporate" : "portrait";
+    if (/(portrait|headshot|solo|graduation)/.test(t)) return /headshot/.test(t) && /(team|staff|company|corporate|business)/.test(t) ? "corporate" : "portrait";
     if (/(family|newborn|maternity|baby|birthday|kids|children)/.test(t)) return "family";
     if (/(corporate|business|event|brand|commercial|conference|party)/.test(t)) return "corporate";
     if (/(where|travel|area|cover|london|brighton|eastbourne|kent|surrey|sussex|tunbridge|abroad|far)/.test(t)) return "areas";
