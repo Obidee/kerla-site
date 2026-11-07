@@ -37,7 +37,7 @@
   function detectSource() {
     var q = new URLSearchParams(location.search), ref = document.referrer, host = "";
     try { host = ref ? new URL(ref).hostname.replace(/^www\./, "") : ""; } catch (e) {}
-    if (q.get("gclid") || q.get("gbraid") || q.get("wbraid") || /cpc|ppc|paid/i.test(q.get("utm_medium") || "")) return "Google Ads";
+    if (q.get("gclid") || q.get("gbraid") || q.get("wbraid")) return "Google Ads";
     if (q.get("fbclid") && !q.get("utm_source")) return "Meta Ads";
     if (q.get("epik") && !q.get("utm_source")) return "Pinterest Ads";
     if (q.get("utm_source")) return q.get("utm_source") + (q.get("utm_medium") ? " / " + q.get("utm_medium") : "");
